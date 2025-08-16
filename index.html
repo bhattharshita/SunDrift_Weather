@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <meta name="description" content="SunDrift is a dynamic weather app with real-time data, forecasts, AQI, outfit tips, and animated sunrise-to-sunset visuals.">
+    <meta name="keywords" content="Weather App, OpenWeather API, GeoDB Cities API, JavaScript, HTML, CSS, Bootstrap, Real-time Weather, AQI, Sunrise Sunset Animation, Forecast, Autocomplete, Outfit Suggestion, Responsive Design, Weather Animation, Dynamic UI, API Integration, AccuWeather Link, Modern Web App, Weather UX">
+    <meta name="author" content="Harshita Bhatt">
+    
+  <title>SunDrift Weather App</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* --- EXISTING CSS ABOVE REMAINS UNCHANGED --- */
+
+/* ✅ Responsive Layout for Tablets and Mobiles */
+@media (max-width: 1024px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .logo {
+    font-size: 28px;
+  }
+
+  .search-box {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .search-box input,
+  .search-box button {
+    width: 100%;
+  }
+
+  .weather-container {
+    padding: 10px;
+  }
+
+  .highlights {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .daily-list {
+    gap: 20px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .temp-main {
+    font-size: 32px;
+  }
+
+  img#icon {
+    width: 80px;
+  }
+
+  .hour-box {
+    min-width: 70px;
+    font-size: 14px;
+  }
+
+  .day-box {
+    font-size: 14px;
+  }
+}
+
+/* ✅ Extra Small Devices (Phones) */
+@media (max-width: 576px) {
+  .top-bar {
+    padding: 15px;
+  }
+
+  .logo {
+    font-size: 24px;
+  }
+
+  .search-box input {
+    font-size: 14px;
+  }
+
+  .search-box button {
+    font-size: 14px;
+  }
+
+  .weather-container {
+    padding: 5px;
+  }
+
+  .card {
+    margin: 10px 0;
+  }
+
+  .temp-main {
+    font-size: 28px;
+  }
+
+  h1, h2, h3 {
+    font-size: 18px;
+  }
+
+  .sun-path-box {
+    width: 100%;
+    height: auto;
+  }
+
+  .sun-path svg.arc {
+    width: 100%;
+  }
+
+  .daily-list {
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .highlights {
+    gap: 10px;
+  }
+
+  .hour-box,
+  .day-box {
+    font-size: 12px;
+  }
+
+  img#icon {
+    width: 60px;
+  }
+
+  .bi {
+    font-size: 26px;
+  }
+}
+
+    .sun-path-box {
+      position: relative;
+      width: 300px;
+      height: 160px;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .sun-path {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      overflow: visible;
+    }
+
+    .arc {
+      width: 100%;
+      height: 100%;
+    }
+
+    #sunIcon {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      font-size: 24px;
+      transform: translate(-50%, -50%);
+      transition: left 0.3s, top 0.3s;
+    }
+
+    .sunrise-time,
+    .sunset-time {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+
+    .sunrise-time {
+      position: absolute;
+      left: 10px;
+      bottom: 0;
+    }
+
+    .sunset-time {
+      position: absolute;
+      right: 10px;
+      bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast-popup"></div>
+
+  <header class="top-bar">
+    <div class="logo">🌤️ <span>SunDrift</span></div>
+      
+    <div class="search-box">
+      <input type="text" id="cityInput" placeholder="Enter City" list="citySuggestions" />
+      <datalist id="citySuggestions"></datalist>
+      <button id="searchBtn"><i class="bi bi-search icon"></i> Search</button>
+      <button id="locationBtn"><i class="bi bi-geo-alt icon"></i> Location</button>
+    </div>
+  </header>
+
+  <main class="weather-container">
+    <section class="current-weather card">
+      <div class="temp-main">
+        <h2 id="temp">--°C</h2>
+        <p id="description">--</p>
+      </div>
+      <div class="info">
+        <p id="datetime">--</p>
+        <p id="location">--</p>
+      </div>
+      <img id="icon" src="" alt="weather icon" />
+    </section>
+
+    <section class="hourly card" id="hourlyForecast">
+       <h3 id="forecastLink" style="cursor: pointer;">Today at</h3>
+      <div class="hourly-list" id="hourList"></div>
+    </section>
+
+    <section class="daily card" id="dailyForecast">
+      <h3>4 Days Forecast</h3>
+      <div class="daily-list" id="dayList"></div>
+    </section>
+
+    <section class="highlights">
+      <div class="card">
+        <h3 id="aqiLink" style="cursor: pointer;">Air Quality Index</h3>
+        <p id="aqiLevel" class="bi bi-cloud-sun me-1">--</p>
+        <p><strong>CO:</strong> <span id="co">--</span></p>
+        <p><strong>NO₂:</strong> <span id="no2">--</span></p>
+        <p><strong>O₃:</strong> <span id="o3">--</span></p>
+              <h3> Outfit Suggestion</h3>
+        <p id="clothingText" align="center">--</p>
+        <div id="clothingIcons" style="display: flex; gap: 10px; margin-top: 10px;"></div>
+     
+      </div>
+      <div class="card">
+        <h3 id="detailsLink" style="cursor: pointer;">Details</h3>
+        <p><i class="bi bi-droplet icon"></i> Humidity: <span id="humidity">--</span>%</p>
+        <p><i class="bi bi-wind icon"></i> Wind: <span id="wind">--</span> m/s</p>
+        <p><i class="bi bi-speedometer2 icon"></i> Pressure: <span id="pressure">--</span> hPa</p>
+        <p><i class="bi bi-thermometer-half icon"></i> Feels like: <span id="feelsLike">--</span>°C</p>
+      </div>
+
+      <div class="card">
+        <h3>Sunrise & Sunset</h3>
+        <p><i class="bi bi-sunrise icon"></i> Sunrise: <span id="sunrise">--</span></p>
+        <p><i class="bi bi-sunset icon"></i> Sunset: <span id="sunset">--</span></p>
+
+        <!-- 🌞 Sun Arc Animation -->
+        <div class="sun-path-box">
+          <div class="sunrise-time"><i class="bi bi-sunrise"></i> <span id="sunriseTime">05:59</span></div>
+          <div class="sunset-time"><i class="bi bi-sunset"></i> <span id="sunsetTime">19:27</span></div>
+
+          <div class="sun-path">
+            <div id="sunIcon">☀️</div>
+            <svg class="arc" viewBox="0 0 100 50">
+              <path d="M0,50 A50,50 0 0,1 100,50" fill="none" stroke="#fbc531" stroke-dasharray="4,4" stroke-width="1.5" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://momentjs.com/downloads/moment.min.js"></script>
+  <script>
+    const sunrise = "05:59";
+    const sunset = "19:27";
+
+    function timeToMinutes(t) {
+      const [h, m] = t.split(":").map(Number);
+      return h * 60 + m;
+    }
+
+    function updateSunPosition() {
+      const now = new Date();
+      const currentMins = now.getHours() * 60 + now.getMinutes();
+      const sunriseMins = timeToMinutes(sunrise);
+      const sunsetMins = timeToMinutes(sunset);
+
+      const progress = Math.max(0, Math.min(1, (currentMins - sunriseMins) / (sunsetMins - sunriseMins)));
+
+      const angle = Math.PI * progress;
+      const radius = 50;
+      const centerX = 150;
+      const centerY = 100;
+
+      const x = centerX + radius * Math.cos(angle - Math.PI);
+      const y = centerY - radius * Math.sin(angle);
+
+      const sunIcon = document.getElementById("sunIcon");
+      sunIcon.style.left = `${x}px`;
+      sunIcon.style.top = `${y}px`;
+    }
+
+    updateSunPosition();
+    setInterval(updateSunPosition, 60000);
+  </script>
+
+  <script src="script.js"></script>
+  
+</body>
+</html>

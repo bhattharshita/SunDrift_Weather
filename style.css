@@ -1,0 +1,302 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: #ffffff;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom, #a5b9cd, #4ca1af);
+  color: #fff;
+  transition: background 1s;
+  
+}
+
+.toast-popup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #121B3C;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.4s ease;
+  z-index: 9999;
+  font-weight: 500;
+}
+.toast-popup.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 60px;
+  background: #031424;
+}
+
+.logo {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+}
+
+.search-box input {
+ padding: 8px 12px;
+  border-radius: 20px;
+  border: none;
+  width: 200px;
+  color: black; /*Add this line */
+  background-color: white; /* Optional: keep white background for contrast */
+
+}
+
+.search-box button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 20px;
+  background: #121B3C;
+  color: rgb(154, 152, 208);
+  cursor: pointer;
+  outline-color: #bdc3c7;
+  
+}
+
+
+.weather-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+
+.card {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  border-radius: 15px;
+  margin: 20px 0;
+  box-shadow: 0 0 10px #00000070;
+}
+
+.temp-main {
+  font-size: 40px;
+}
+
+img#icon {
+   width: 80px;
+  height: auto;
+  float: right;
+  margin-left: 10px;
+
+}
+
+.hourly-list {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  margin-top: 10px;
+}
+.daily-list {
+  display: flex;
+  justify-content: center;   /* 👈 center items horizontally */
+  gap: 40px;                 /* space between day boxes */
+  flex-wrap: wrap;           /* allow wrap on smaller screens */
+  margin-top: 10px;
+}
+
+.day-box {
+  background: transparent;   /* remove card background */
+  padding: 0 10px;           /* spacing inside each day box */
+  border-radius: 0;
+  min-width: auto;
+  text-align: center;
+  color: white;              /* ensure white font for visibility */
+}
+
+h3#forecastLink:hover,
+h3#aqiLink:hover,
+h3#detailsLink:hover {
+  color: #ececeb;
+  cursor: pointer;
+}
+
+
+
+.hour-box {
+  background: #34495e;
+  padding: 10px;
+  border-radius: 10px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.highlights {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff;
+}
+
+.bi{
+    color: #fbc531; /* bright yellow shade */
+
+}
+
+
+/* === Weather-Based Backgrounds === */
+body.clear-day {
+  background: linear-gradient(to top, #87ceeb, #ffffff);
+}
+
+body.clear-night {
+  background: linear-gradient(to top, #0f2027, #203a43, #2c5364);
+}
+
+body.clouds {
+  background: linear-gradient(to top, #bdc3c7, #2c3e50);
+}
+
+body.rain {
+  background: linear-gradient(to top, #434343, #000000);
+}
+
+/* === Rain Animation === */
+body.rain::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://i.ibb.co/7CQVJNm/rain-animation.gif');
+  background-repeat: repeat;
+  background-size: cover;
+  opacity: 0.1;
+  z-index: -1;
+}
+
+/* === Moving Clouds === */
+body.clouds::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300%;
+  height: 100%;
+  background-image: url('cloud.png');
+  background-repeat: repeat-x;
+  background-size: cover;
+  animation: moveClouds 60s linear infinite;
+  opacity: 0.25;
+  z-index: -1;
+}
+
+@keyframes moveClouds {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* === Lightning for Storms === */
+body.storm::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: white;
+  animation: lightningFlash 6s infinite;
+  opacity: 0;
+  z-index: 999;
+}
+
+@keyframes lightningFlash {
+  0%, 97%, 100% {
+    opacity: 0;
+  }
+  98% {
+    opacity: 0.8;
+  }
+  99% {
+    opacity: 0.2;
+  }
+}
+
+/* === Moon for Night === */
+body.night::after {
+  content: "";
+  position: fixed;
+  top: 50px;
+  right: 50px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, #fffbe6, #fcd440);
+  border-radius: 50%;
+  box-shadow: 0 0 20px #fcd440;
+  z-index: -1;
+}
+
+/* === Sun Animation === */
+body.clear::after {
+  content: "";
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, #fcd440, #f7981c);
+  border-radius: 50%;
+  box-shadow: 0 0 20px #fcd440;
+  animation: rotateSun 20s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotateSun {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.05);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* === Fog === */
+body.fog::before {
+  content: "";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url('https://i.ibb.co/syFyVZ0/fog.png') repeat;
+  opacity: 0.3;
+  animation: fogDrift 60s linear infinite;
+  z-index: -1;
+}
+
+@keyframes fogDrift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -1000px 0;
+  }
+}
